@@ -26,7 +26,7 @@
         }
 
         .flex-center {
-            align-items: center;
+            /*align-items: center;*/
             display: flex;
             justify-content: center;
         }
@@ -102,9 +102,9 @@
         .button.primary:focus, .button.primary:hover {
             background-color: #1b5dab;
         }
-         .button {
-             height: 44px;
-         }
+        .button {
+            height: 44px;
+        }
         .uploader-stage .file-uploader p {
             text-align: center;
         }
@@ -121,6 +121,7 @@
         }
         .uploader-stage {
             max-width: 1400px;
+            margin-top: 100px;
         }
         #progress_bar {
             margin: 0;
@@ -179,54 +180,89 @@
             border-radius: 50%;
             animation: sp-anime 0.8s infinite linear;
         }
+        @keyframes sp-anime {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(359deg);
+            }
+        }
+        .result {
+            margin: 0 50px;
+        }
+        .result .dataCount {
+            font-weight: 600;
+        }
+        .pull-right {
+            float: right;
+        }
+        .header-result-bar {
+            margin: 10px 0;
+        }
+        .action-send-mail {
+            display: none;
+        }
+        .send-email-message {
+            margin-top: 10px;
+            margin-right: 10px;
+            color: #44cc5b;
+        }
     </style>
 </head>
 <body>
-    <div class="flex-center position-ref full-height">
-        <div class="wrapper uploader-stage">
-            <h1 class="primary-header">Bulk Send Emails</h1>
-            <div tabindex="0"><input accept=".csv,.tsv" type="file" class="inputFile" autocomplete="off" tabindex="-1" style="display: none;"></div>
-            <div class="notice secondaryTextColor">
-                <div class="file-uploader">
-                    <button class="button primary icon-upload">Upload data from file</button>
-                    <p class="secondaryTextColor">.csv spreadsheets accepted.</p>
-                </div>
-                <p class="notice-right paragraph secondaryTextColor">
-                    You can upload any .csv file with any set of columns as long as it has 1 record per row.
-                    The next step will allow you to match your spreadsheet columns to the right data points.
-                    You'll be able to clean up or remove any corrupted data before finalizing your report.
-                </p>
-                <div id="file-info"></div>
-                <div id="progress_bar"><div class="percent">0%</div></div>
-                <div id="error-message"></div>
-                <div id="success-message">Send mail successful.</div>
-                <div class="action-btn"><button class="button primary process-file">Send</button></div>
+<div class="flex-center position-ref full-height">
+    <div class="wrapper uploader-stage">
+        <h1 class="primary-header">Bulk Send Emails</h1>
+        <div tabindex="0"><input accept=".csv,.tsv" type="file" class="inputFile" autocomplete="off" tabindex="-1" style="display: none;"></div>
+        <div class="notice secondaryTextColor">
+            <div class="file-uploader">
+                <button class="button primary icon-upload">Upload data from file</button>
+                <p class="secondaryTextColor">.csv spreadsheets accepted.</p>
             </div>
+            <p class="notice-right paragraph secondaryTextColor">
+                You can upload any .csv file with any set of columns as long as it has 1 record per row.
+                The next step will allow you to match your spreadsheet columns to the right data points.
+                You'll be able to clean up or remove any corrupted data before finalizing your report.
+            </p>
+            <div id="file-info"></div>
+            <div id="progress_bar"><div class="percent">0%</div></div>
+            <div id="error-message"></div>
+            <div id="success-message">Send mail successful.</div>
+            <div class="action-btn"><button class="button primary process-file">Upload</button></div>
+        </div>
+        <div class="result">
+            <div class="header-result-bar">
+                <span class="dataCount"></span>
+                <button class="button primary pull-right action-send-mail">Send email</button>
+                <span class="send-email-message pull-right"></span>
+                <div class="clearfix" style="clear: both;"></div>
+            </div>
+            <div id="dataList"></div>
         </div>
     </div>
-    <div id="overlay">
-        <div class="cv-spinner">
-            <span class="spinner"></span>
-        </div>
+</div>
+<div id="overlay">
+    <div class="cv-spinner">
+        <span class="spinner"></span>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
-    <script type="application/javascript">
-        $(function() {
-            var reader;
-            var fileInput = '';
-            var progress = document.querySelector('.percent');
-            $('.icon-upload').on('click', function (e) {
-                $('.inputFile').trigger('click');
-            });
-            $('.process-file').on('click', function (e) {
-                if (!checkInvalidFile()) return false;
-                console.log('go');
+</div>
+<script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+<script type="application/javascript">
+    $(function() {
+        var reader;
+        var fileInput = '';
+        var progress = document.querySelector('.percent');
+        var dataTemp = [];
+        $('.action-send-mail').on('click', function (e) {
+
+            var conf = confirm("You are about send all email in list below. Are you sure to continue?");
+            if (conf == true && dataTemp.length > 0) {
                 var formData = new FormData();
-                formData.append('file', fileInput);
+                formData.append('data', JSON.stringify(dataTemp));
                 formData.append('_token', "{{ csrf_token() }}");
-                formData.append('type', 'csv');
                 $.ajax({
-                    url: '/upload',
+                    url: '/sendmail',
                     data: formData,
                     method: 'POST',
                     contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
@@ -237,92 +273,149 @@
                     success: function (data) {
                         var res = JSON.parse(data);
                         console.log(res);
-                        if (res.empty) {
-                            $('#success-message').html('No email in sheet.');
+                        if (res.total > 0) {
+                            $('.send-email-message').html('Total ' + res.total + ' email(s) has been sent.');
+                            setTimeout(function () {
+                                $('.send-email-message').html('');
+                            }, 2000);
                         }
-                        $('#success-message').css('display','block');
                         $("#overlay").fadeOut(300);
                     }
                 });
-            });
-            $('.inputFile').on('change', function (evt) {
-                fileInput = '';
-                console.log('change');
-                evt.stopPropagation();
-                evt.preventDefault();
-                var file = evt.target.files[0];
-                var output = [];
-                output.push('<li style="color: #51d08a;"><strong>', escape(file.name), '</strong> (', file.type || 'n/a', ') - ',
-                    file.size, ' bytes, last modified: ',
-                    file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : 'n/a',
-                    '</li>');
-                document.getElementById('file-info').innerHTML = '<ul>' + output.join('') + '</ul>';
-                $('.action-btn').css('display','none');
-                // Reset progress indicator on new file selection.
-                progress.style.width = '0%';
-                progress.textContent = '0%';
-
-                reader = new FileReader();
-                reader.onerror = errorHandler;
-                reader.onprogress = updateProgress;
-                reader.onabort = function(e) {
-                    alert('File read cancelled');
-                };
-                reader.onloadstart = function(e) {
-                    document.getElementById('progress_bar').className = 'loading';
-                };
-                reader.onload = function(e) {
-                    // Ensure that the progress bar displays 100% at the end.
-                    progress.style.width = '100%';
-                    progress.textContent = '100%';
-                    $('.action-btn').css('display','block');
-                    fileInput = file;
-                    // setTimeout("document.getElementById('progress_bar').className='';", 2000);
-                };
-
-                // Read in the image file as a binary string.
-                reader.readAsBinaryString(file);
-            });
-            
-            function checkInvalidFile() {
-                if (fileInput != '') {
-                    var type = fileInput.name.split('.').pop();
-                    if (type == 'csv') {
-                        return true;
-                    }
-                }
-                document.getElementById('error-message').innerHTML = 'Invalid File. Please upload csv file again.';
-                setTimeout(function () {
-                    document.getElementById('error-message').innerHTML = '';
-                }, 2000);
-                return false;
-            }
-            function updateProgress(evt) {
-                // evt is an ProgressEvent.
-                if (evt.lengthComputable) {
-                    var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
-                    // Increase the progress bar length.
-                    if (percentLoaded < 100) {
-                        progress.style.width = percentLoaded + '%';
-                        progress.textContent = percentLoaded + '%';
-                    }
-                }
-            }
-            function errorHandler(evt) {
-                switch(evt.target.error.code) {
-                    case evt.target.error.NOT_FOUND_ERR:
-                        alert('File Not Found!');
-                        break;
-                    case evt.target.error.NOT_READABLE_ERR:
-                        alert('File is not readable');
-                        break;
-                    case evt.target.error.ABORT_ERR:
-                        break; // noop
-                    default:
-                        alert('An error occurred reading this file.');
-                };
             }
         });
-    </script>
+        $('.icon-upload').on('click', function (e) {
+            $('.inputFile').trigger('click');
+        });
+        $('.process-file').on('click', function (e) {
+            if (!checkInvalidFile()) return false;
+            dataTemp = [];
+            var formData = new FormData();
+            formData.append('file', fileInput);
+            formData.append('_token', "{{ csrf_token() }}");
+            formData.append('type', 'csv');
+            $.ajax({
+                url: '/upload',
+                data: formData,
+                method: 'POST',
+                contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                processData: false, // NEEDED, DON'T OMIT THIS
+                beforeSend: function() {
+                    $("#overlay").fadeIn(300);
+                },
+                success: function (data) {
+                    var res = JSON.parse(data);
+                    console.log(res);
+                    // if (res.empty) {
+                    //     $('#success-message').html('No email in sheet.');
+                    // }
+                    // $('#success-message').css('display','block');
+                    var content = '';
+                    if (res.data && res.total > 0) {
+                        dataTemp = res.data;
+                        content += '<table class="table table-striped" id="dataTable">';
+                        var header = '<thead>';
+                        var body = '<tbody>';
+                        for (var i = 0; i < res.data.length; i++) {
+                            body += '<tr>';
+                            for(var j = 0; j < res.data[i].length; j++) {
+                                if (i == 0) {
+                                    header += '<th>'+res.data[i][j]+'</th>';
+                                } else {
+                                    body += '<td>'+res.data[i][j]+'</td>';
+                                }
+                            }
+                            body += '</tr>';
+                        }
+                        content += header + body + '</table>';
+                        $('.action-send-mail').css('display', 'block');
+                    } else {
+                        $('.action-send-mail').css('display', 'none');
+                    }
+                    $('.dataCount').html('Found ' + res.total + ' email(s) in sheet.')
+                    $('#dataList').html(content);
+                    $("#overlay").fadeOut(300);
+                }
+            });
+        });
+        $('.inputFile').on('change', function (evt) {
+            fileInput = '';
+            console.log('change');
+            evt.stopPropagation();
+            evt.preventDefault();
+            var file = evt.target.files[0];
+            var output = [];
+            output.push('<li style="color: #51d08a;"><strong>', escape(file.name), '</strong> (', file.type || 'n/a', ') - ',
+                file.size, ' bytes, last modified: ',
+                file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : 'n/a',
+                '</li>');
+            document.getElementById('file-info').innerHTML = '<ul>' + output.join('') + '</ul>';
+            $('.action-btn').css('display','none');
+            // Reset progress indicator on new file selection.
+            progress.style.width = '0%';
+            progress.textContent = '0%';
+
+            reader = new FileReader();
+            reader.onerror = errorHandler;
+            reader.onprogress = updateProgress;
+            reader.onabort = function(e) {
+                alert('File read cancelled');
+            };
+            reader.onloadstart = function(e) {
+                document.getElementById('progress_bar').className = 'loading';
+            };
+            reader.onload = function(e) {
+                // Ensure that the progress bar displays 100% at the end.
+                progress.style.width = '100%';
+                progress.textContent = '100%';
+                $('.action-btn').css('display','block');
+                fileInput = file;
+                // setTimeout("document.getElementById('progress_bar').className='';", 2000);
+            };
+
+            // Read in the image file as a binary string.
+            reader.readAsBinaryString(file);
+        });
+
+        function checkInvalidFile() {
+            if (fileInput != '') {
+                var type = fileInput.name.split('.').pop();
+                if (type == 'csv') {
+                    return true;
+                }
+            }
+            document.getElementById('error-message').innerHTML = 'Invalid File. Please upload csv file again.';
+            setTimeout(function () {
+                document.getElementById('error-message').innerHTML = '';
+            }, 2000);
+            return false;
+        }
+        function updateProgress(evt) {
+            // evt is an ProgressEvent.
+            if (evt.lengthComputable) {
+                var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
+                // Increase the progress bar length.
+                if (percentLoaded < 100) {
+                    progress.style.width = percentLoaded + '%';
+                    progress.textContent = percentLoaded + '%';
+                }
+            }
+        }
+        function errorHandler(evt) {
+            switch(evt.target.error.code) {
+                case evt.target.error.NOT_FOUND_ERR:
+                    alert('File Not Found!');
+                    break;
+                case evt.target.error.NOT_READABLE_ERR:
+                    alert('File is not readable');
+                    break;
+                case evt.target.error.ABORT_ERR:
+                    break; // noop
+                default:
+                    alert('An error occurred reading this file.');
+            };
+        }
+    });
+</script>
 </body>
 </html>

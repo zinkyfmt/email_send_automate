@@ -16,3 +16,4 @@ Route::get('/', function () {
 });
 Route::post('/upload', 'HomeController@upload');
 Route::get('/send/email', 'HomeController@mail');
+Route::post('/sendmail', 'HomeController@sendmail');
