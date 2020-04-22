@@ -242,7 +242,7 @@
 
                 <div class="form-group">
                     {{ Form::label('admin_email', 'Email Admin') }}
-                    {{ Form::email('admin_email', null, array('class' => 'form-control')) }}
+                    {{ Form::email('admin_email', null, array('class' => 'form-control', 'disabled')) }}
                 </div>
 
                 <div class="form-group">
