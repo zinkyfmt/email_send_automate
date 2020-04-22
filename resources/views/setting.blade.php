@@ -209,37 +209,53 @@
             margin-right: 10px;
             color: #44cc5b;
         }
+        .header ul li {
+            display: inline-block;
+            padding: 10px;
+        }
+        .mid {
+            width: 1200px;
+        }
     </style>
 </head>
 <body>
 <div class="flex-center position-ref full-height">
-    <div class="wrapper uploader-stage">
-        <h1 class="primary-header">Setting</h1>
-        @if(Session::has('flash_message'))
-            <div class="alert alert-success">
-                {{ Session::get('flash_message') }}
-            </div>
-        @endif
-        <div class="notice secondaryTextColor">
-            {{ Form::model($setting, array('route' => array('setting.update', $setting->id), 'method' => 'PUT')) }}
+    <div class="mid">
+        <div class="header">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/setting/1/edit">Setting</a></li>
+            </ul>
+        </div>
+        <div class="wrapper uploader-stage">
+            <h1 class="primary-header">Setting</h1>
+            @if(Session::has('flash_message'))
+                <div class="alert alert-success">
+                    {{ Session::get('flash_message') }}
+                </div>
+            @endif
+            <div class="notice secondaryTextColor">
+                {{ Form::model($setting, array('route' => array('setting.update', $setting->id), 'method' => 'PUT')) }}
 
-            <div class="form-group">
-                {{ Form::label('admin_email', 'Email Admin') }}
-                {{ Form::email('admin_email', null, array('class' => 'form-control')) }}
-            </div>
+                <div class="form-group">
+                    {{ Form::label('admin_email', 'Email Admin') }}
+                    {{ Form::email('admin_email', null, array('class' => 'form-control')) }}
+                </div>
 
-            <div class="form-group">
-                {{ Form::label('email_subject', 'Email Subject') }}
-                {{ Form::text('email_subject',null, array('class' => 'form-control')) }}
+                <div class="form-group">
+                    {{ Form::label('email_subject', 'Email Subject') }}
+                    {{ Form::text('email_subject',null, array('class' => 'form-control')) }}
+                </div>
+                <div class="form-group">
+                    {!! Form::label('email_template', 'Email Content') !!}
+                    {!! Form::textarea('email_template',null, ['class' => 'form-control']) !!}
+                </div>
+                {{ Form::submit('Save!', array('class' => 'btn btn-primary')) }}
+                {!! Form::close() !!}
             </div>
-            <div class="form-group">
-                {!! Form::label('email_template', 'Email Content') !!}
-                {!! Form::textarea('email_template',null, ['class' => 'form-control']) !!}
-            </div>
-            {{ Form::submit('Save setting!', array('class' => 'btn btn-primary')) }}
-            {!! Form::close() !!}
         </div>
     </div>
+
 </div>
 <div id="overlay">
     <div class="cv-spinner">

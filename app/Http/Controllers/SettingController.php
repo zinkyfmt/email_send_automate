@@ -81,7 +81,7 @@ class SettingController extends Controller
         $setting->save();
 
         // redirect
-        Session::put('flash_message', 'Setting save successful.');
+        Session::flash('flash_message', 'Setting save successful.');
         return Redirect::to("setting/$id/edit");
     }
 

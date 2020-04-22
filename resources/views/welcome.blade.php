@@ -208,11 +208,26 @@
             margin-right: 10px;
             color: #44cc5b;
         }
+        .header ul li {
+            display: inline-block;
+            padding: 10px;
+        }
+        .mid {
+            width: 1200px;
+        }
     </style>
 </head>
 <body>
 <div class="flex-center position-ref full-height">
-    <div class="wrapper uploader-stage">
+    <div class="mid">
+        <div class="header">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/setting/1/edit">Setting</a></li>
+            </ul>
+        </div>
+        <div class="wrapper uploader-stage">
+
         <h1 class="primary-header">Bulk Send Emails</h1>
         <div tabindex="0"><input accept=".csv,.tsv" type="file" class="inputFile" autocomplete="off" tabindex="-1" style="display: none;"></div>
         <div class="notice secondaryTextColor">
@@ -240,6 +255,7 @@
             </div>
             <div id="dataList"></div>
         </div>
+    </div>
     </div>
 </div>
 <div id="overlay">
