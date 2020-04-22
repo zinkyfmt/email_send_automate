@@ -14,8 +14,8 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::resource('setting', 'SettingController');
 Route::post('/upload', 'HomeController@upload');
 Route::get('/send/email', 'HomeController@mail');
 Route::post('/sendmail', 'HomeController@sendmail');
-
-Route::post('/webhook', 'HomeController@webhook');
+Route::post('/webhook', 'HomeController@subscribe');

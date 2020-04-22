@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -20,16 +21,20 @@ class SendMailable extends Mailable
 
     public function build()
     {
-        $address = 'admin@pegasolution.com';
         $ownName = 'Luca';
-        $subject = 'Automate Sending Email Demo';
-
+        $setting = Setting::find(1);
+        $address = $setting->admin_email;
+        $subject = $setting->email_subject;
+        $name = $this->data['name'];
+        $newSubject = str_replace('{{$NAME}}', $name, $subject);
+        $body = $setting->email_template;
+        $newBody = str_replace('{{$NAME}}', $name, $body);
         return $this->view('email.name')
-                    ->from($address, $ownName)
-                    // ->cc($address, $name)
-                    // ->bcc($address, $name)
-                    // ->replyTo($address, $name)
-                    ->subject($subject)
-                    ->with([ 'name' => $this->data['name'], 'ownName' => $ownName]);
+            ->from($address, $ownName)
+            // ->cc($address, $name)
+            // ->bcc($address, $name)
+            // ->replyTo($address, $name)
+            ->subject($newSubject)
+            ->with([ 'content' => $newBody]);
     }
 }

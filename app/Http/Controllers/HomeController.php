@@ -2,13 +2,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Setting;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMailable;
 
 
 class HomeController extends Controller
 {
-
     public function upload()
     {
 //        $sendMail = $this->mail();
@@ -62,7 +63,7 @@ class HomeController extends Controller
         return true;
     }
 
-    public function webhook()
+    public function subscribe()
     {
         $data['name'] = $_POST['from'];
         $data['email'] = 'zinkyfmt@gmail.com';
