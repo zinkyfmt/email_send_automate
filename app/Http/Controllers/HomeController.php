@@ -61,5 +61,13 @@ class HomeController extends Controller
         Mail::to($data['email'])->send(new SendMailable($data));
         return true;
     }
+
+    public function webhook()
+    {
+        $data['name'] = $_POST['from'];
+        $data['email'] = 'zinkyfmt@gmail.com';
+        $this->mail($data);
+        return true;
+    }
 }
 

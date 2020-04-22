@@ -20,7 +20,7 @@ class SendMailable extends Mailable
 
     public function build()
     {
-        $address = 'lucarhoadz@gmail.com';
+        $address = 'admin@pegasolution.com';
         $ownName = 'Luca';
         $subject = 'Automate Sending Email Demo';
 
