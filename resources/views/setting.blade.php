@@ -216,6 +216,9 @@
         .mid {
             width: 1200px;
         }
+        .alert {
+            margin: 10px 50px 0;
+        }
     </style>
 </head>
 <body>
