@@ -78,6 +78,7 @@ class SettingController extends Controller
         $setting->admin_email       = Input::get('admin_email');
         $setting->email_subject      = Input::get('email_subject');
         $setting->email_template = Input::get('email_template');
+        $setting->owner_name      = Input::get('owner_name');
         $setting->save();
 
         // redirect

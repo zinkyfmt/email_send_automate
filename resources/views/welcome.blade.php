@@ -293,7 +293,7 @@
                             $('.send-email-message').html('Total ' + res.total + ' email(s) has been sent.');
                             setTimeout(function () {
                                 $('.send-email-message').html('');
-                            }, 2000);
+                            }, 5000);
                         }
                         $("#overlay").fadeOut(300);
                     }

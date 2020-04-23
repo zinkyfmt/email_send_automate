@@ -90,7 +90,7 @@
         .notice {
             border: 3px #e8e8e8 dotted;
             margin: 40px;
-            padding: 64px;
+            padding: 30px;
         }
         .uploader-stage .file-uploader {
             float: left;
@@ -121,7 +121,7 @@
         }
         .uploader-stage {
             max-width: 1400px;
-            margin-top: 100px;
+            margin-top: 50px;
             min-width: 900px;
         }
         #progress_bar {
@@ -219,6 +219,42 @@
         .alert {
             margin: 10px 50px 0;
         }
+        .preview-email {
+            display: none;
+            bottom: 10px !important;
+            right: 10px;
+            position: absolute !important;
+            overflow-y: hidden;
+            width: 400px;
+            z-index: 99;
+            background: #f9f7c9;
+            border: 1px solid #ccc;
+            border-radius-topleft: 5px;
+            border-radius-topright: 5px;
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-topright: 5px;
+            box-shadow: 5px 10px #888888;
+        }
+        .preview-email div {
+            padding: 10px;
+        }
+        .popup-header {
+            border-bottom: 1px solid;
+        }
+        .popup-header h5 {
+            color: #ccc;
+        }
+        .popup-header span {
+            margin-left: 10px;
+        }
+        .body-email {
+            margin-bottom: 20px;
+        }
+        .close {
+            position: absolute;
+            top: 0;
+            right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -241,24 +277,41 @@
                 {{ Form::model($setting, array('route' => array('setting.update', $setting->id), 'method' => 'PUT')) }}
 
                 <div class="form-group">
-                    {{ Form::label('admin_email', 'Email Admin') }}
+                    {{ Form::label('admin_email', 'Sender Email') }}
                     {{ Form::email('admin_email', null, array('class' => 'form-control')) }}
                 </div>
-
+                <div class="form-group">
+                    {{ Form::label('owner_name', 'Sender Name') }}
+                    {{ Form::text('owner_name',null, array('class' => 'form-control')) }}
+                </div>
                 <div class="form-group">
                     {{ Form::label('email_subject', 'Email Subject') }}
                     {{ Form::text('email_subject',null, array('class' => 'form-control')) }}
                 </div>
                 <div class="form-group">
-                    {!! Form::label('email_template', 'Email Content') !!}
+                    {!! Form::label('email_template', 'Email HTML Content') !!}
                     {!! Form::textarea('email_template',null, ['class' => 'form-control']) !!}
                 </div>
-                {{ Form::submit('Save!', array('class' => 'btn btn-primary')) }}
+                {{ Form::button('Preview', array('class' => 'btn btn-primary preview')) }}
+                {{ Form::submit('Save', array('class' => 'btn btn-primary')) }}
                 {!! Form::close() !!}
             </div>
         </div>
     </div>
-
+</div>
+<div class="preview-email">
+    <div class="popup-header">
+        <h5>From email:</h5><span class="from-email">dasdasda</span>
+    </div>
+    <div class="popup-header">
+        <h5>Sender:</h5><span class="from-name">Luca</span>
+    </div>
+    <div class="popup-header">
+        <h5>Subject:</h5><span class="subject">ANC</span>
+    </div>
+    <div class="body-email">
+    </div>
+    <button class="close">x</button>
 </div>
 <div id="overlay">
     <div class="cv-spinner">
@@ -266,5 +319,19 @@
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+<script>
+$(function() {
+    $('.preview').on('click', function (e) {
+        $('.preview-email').css('display','block');
+        $('.from-email').html($('#admin_email').val());
+        $('.from-name').html($('#owner_name').val());
+        $('.subject').html($('#email_subject').val());
+        $('.body-email').html($('#email_template').val());
+    });
+    $('.close').on('click', function (e) {
+        $('.preview-email').css('display','none');
+    })
+});
+</script>
 </body>
 </html>

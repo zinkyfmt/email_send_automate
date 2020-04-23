@@ -12,7 +12,7 @@ class Setting extends Model
      * @var array
      */
     protected $fillable = [
-        'admin_email', 'email_template','email_subject'
+        'admin_email', 'email_template','email_subject', 'owner_name'
     ];
     //
 }

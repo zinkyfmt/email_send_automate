@@ -21,8 +21,8 @@ class SendMailable extends Mailable
 
     public function build()
     {
-        $ownName = 'Luca';
         $setting = Setting::find(1);
+        $ownName = $setting->owner_name;
         $address = $setting->admin_email;
         $subject = $setting->email_subject;
         $name = $this->data['name'];
