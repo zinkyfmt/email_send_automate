@@ -379,6 +379,7 @@ class ComposerStaticInitd5642f85592aa2f11b36760d47c54012
     public static $classMap = array (
         'AlterSettingTable' => __DIR__ . '/../..' . '/database/migrations/2020_04_23_080322_alter_setting_table.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\Email' => __DIR__ . '/../..' . '/app/Email.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
         'App\\Http\\Controllers\\Auth\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/LoginController.php',
@@ -416,6 +417,7 @@ class ComposerStaticInitd5642f85592aa2f11b36760d47c54012
         'Collective\\Html\\HtmlBuilder' => __DIR__ . '/..' . '/laravelcollective/html/src/HtmlBuilder.php',
         'Collective\\Html\\HtmlFacade' => __DIR__ . '/..' . '/laravelcollective/html/src/HtmlFacade.php',
         'Collective\\Html\\HtmlServiceProvider' => __DIR__ . '/..' . '/laravelcollective/html/src/HtmlServiceProvider.php',
+        'CreateEmailTable' => __DIR__ . '/../..' . '/database/migrations/2020_04_23_185820_create_email_table.php',
         'CreateSettingUserTable' => __DIR__ . '/../..' . '/database/migrations/2020_04_22_182646_create_setting_user_table.php',
         'Cron\\AbstractField' => __DIR__ . '/..' . '/mtdowling/cron-expression/src/Cron/AbstractField.php',
         'Cron\\CronExpression' => __DIR__ . '/..' . '/mtdowling/cron-expression/src/Cron/CronExpression.php',
